@@ -1,2 +1,2 @@
 # scripts
-Scripts for misc ideads
+Scripts for misc ideas
