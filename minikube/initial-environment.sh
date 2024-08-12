@@ -3,17 +3,9 @@
 # Configs
 export NFS_SERVER="192.168.0.21"
 export NFS_PATH="/data/nfs"
-export VAULT_K8S_NAMESPACE="vault"
-export VAULT_HELM_RELEASE_NAME="vault"
-export VAULT_SERVICE_NAME="vault-internal"
-export K8S_CLUSTER_NAME="cluster.local"
-export WORKDIR="$(pwd)/work"
-export KEY_SHARES=5
-export KEY_THRESHOLD=3
 
 # Delete old and start fresh
-rm -f ~/.vault-token
-rm -rf $WORKDIR && mkdir -p $WORKDIR
+minikube stop
 minikube delete
 minikube start \
     --nodes=4 \
