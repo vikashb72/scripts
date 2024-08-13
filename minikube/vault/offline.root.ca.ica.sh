@@ -54,10 +54,10 @@ certstrap init \
 
 openssl x509 -in out/${FN_SSL_CN}.crt -noout  -subject -issuer -enddate
 
-# done already
-#vault secrets enable \
-#    -description="PKI engine hosting intermediate CA for ${SSL_OU}" \
-#    -max-lease-ttl=87600h  -default-lease-ttl=87600h pki
+# Throws error after 1st run: "path is already in use at pki/"
+vault secrets enable \
+    -description="PKI engine hosting intermediate CA for ${SSL_OU}" \
+    -max-lease-ttl=87600h  -default-lease-ttl=87600h pki || true
 
 [ ! -f csr/${FN_SSL_CN}_v1_ICA1_v1.csr ] && \
 vault write -format=json \
