@@ -312,3 +312,11 @@ curl --cacert $WORKDIR/vault.ca \
     https://${MINIKUBE_IP}:30001/v1/secret/data/tls/apitest \
     | jq .data.data
 EOF
+
+
+#helm repo add prometheus-community \
+#    https://prometheus-community.github.io/helm-charts
+#helm install prometheus prometheus-community/prometheus \
+#    --namespace metrics \
+#    --create-namespace \
+#    --wait

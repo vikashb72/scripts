@@ -36,3 +36,9 @@ kubectl wait -n nfs-provisioning pods \
     -l app=nfs-subdir-external-provisioner \
     --for condition=Ready \
     --timeout=30s
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+# Install prometheus
+helm install prometheus prometheus-community/prometheus \
+    --namespace metrics --create-namespace --wait
