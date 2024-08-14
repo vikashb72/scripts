@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 CERT_FOR="test"
-WORKDIR=$(pwd)/work/tls
+WORKDIR=$(pwd)/work/tls/
 
 [ ! -z $1 ] && CERT_FOR=$1
 
@@ -19,7 +19,8 @@ STATUS=$(kubectl -n $VAULT_K8S_NAMESPACE exec vault-0 -- vault status | \
      grep -E '^Initialized *true$|^Sealed *false' | wc -l)
 export VAULT_TOKEN=$(jq -r ".root_token" ${WORKDIR}/cluster-keys.json)
 export VAULT_ADDR="https://$(minikube ip):30001"
-export VAULT_CACERT="${WORKDIR}/vault.ca"
+#export VAULT_CACERT="${WORKDIR}/vault.ca"
+export VAULT_CACERT="${WORKDIR}/../vault/vault.ca"
 
 [ ${STATUS} -ne 2 ] && echo "REQUIRES WORKING VAULT" && exit 2
 
@@ -37,6 +38,7 @@ CA_CHAIN="${CERT_FOR_FQDN}.ca.bundle.crt"
 vault write \
     -format=json pki/issue/generate-cert-role \
     common_name=${CERT_FOR_FQDN} \
+    ip_sans=127.0.0.1,192.168.0.21 \
     | jq .data -r > ${DATA}
 
 jq -r '.private_key' $DATA > $KEY

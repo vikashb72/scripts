@@ -3,7 +3,7 @@
 # Set vars
 export MINIKUBE_IP="$(minikube ip)"
 export VAULT_K8S_NAMESPACE="vault" 
-export WORKDIR="$(pwd)/work/upgrade-to-tls"
+export WORKDIR="$(pwd)/work/tls"
 export KEY_SHARES=5
 export KEY_THRESHOLD=3
 
@@ -16,8 +16,8 @@ kubectl wait -n ${VAULT_K8S_NAMESPACE} pods \
 
 # Get Tokens
 VAULT_UNSEAL_KEYS=$(jq -r ".unseal_keys_b64[]" \
-    ${WORKDIR}/init-keys.json | head -n $KEY_THRESHOLD)
-VAULT_ROOT_TOKEN=$(jq -r ".root_token" ${WORKDIR}/init-keys.json)
+    ${WORKDIR}/cluster-keys.json | head -n $KEY_THRESHOLD)
+VAULT_ROOT_TOKEN=$(jq -r ".root_token" ${WORKDIR}/cluster-keys.json)
 
 # Get list of vault server pods
 VAULT_PODS=$(kubectl -n ${VAULT_K8S_NAMESPACE} get pods \

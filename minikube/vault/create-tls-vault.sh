@@ -137,6 +137,7 @@ kubectl -n $VAULT_K8S_NAMESPACE config view \
     -o jsonpath='{.clusters[].cluster.certificate-authority-data}' \
     | base64 -d > ${WORKDIR}/vault.ca
 
+cp ${WORKDIR}/vault.ca ~/vault.ca
 
 # Create TLS Secret
 kubectl -n $VAULT_K8S_NAMESPACE create secret generic vault-ha-tls \
@@ -151,7 +152,7 @@ global:
    enabled: true
    tlsDisable: false
 csi:
-  enabled: true
+  enabled: false
 injector:
    enabled: true
 ui:
@@ -276,6 +277,8 @@ done
 # get cluster root token
 export CLUSTER_ROOT_TOKEN=$(cat ${WORKDIR}/cluster-keys.json | \
      jq -r ".root_token")
+
+echo $CLUSTER_ROOT_TOKEN > ~/.vault-token
 
 # Login to vault-0 with root token
 kubectl exec -n $VAULT_K8S_NAMESPACE vault-0 -- \
