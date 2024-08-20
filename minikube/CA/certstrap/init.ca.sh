@@ -11,8 +11,8 @@ SSL_OU="Where-Ever Minikube Lab"
 
 ROOT_CN="${SSL_OU} Root CA"
 INTERMEDIATE_CN="${SSL_OU} Intermediate CA"
-ROOT_CA_PASSPHRASE="Assume-Ignorant-Dedicate-Quantity-Strain-Pin-Jungle"
-INTERMEDIATE_CA_PASSPHRASE="Ward-Economics-Producer-Interface-Eternal-Abundant"
+ROOT_CA_PASSPHRASE=$(cat passphrase.root.ca)
+INTERMEDIATE_CA_PASSPHRASE=$(cat passphrase.intermediate.ca)
 
 # Create root CA certificate
 certstrap --depot-path certs init \

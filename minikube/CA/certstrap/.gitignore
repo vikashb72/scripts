@@ -1,3 +1,5 @@
 certs/
 intermediateCA/
 rootCA/
+passphrase.intermediate.ca
+passphrase.root.ca
