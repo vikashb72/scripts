@@ -37,7 +37,7 @@ do
 
     # policy
     vault policy write ${role}-external-secret-operator-policy -<<EOT
-path "env/${role}/*" {
+path "env/data/${role}/*" {
   capabilities = ["read"]
 }
 EOT
@@ -57,6 +57,9 @@ EOT
    echo "\$token=\$(vault token create -policy=${role}-external-secret-operator-policy -format=json | jq -r '.auth.client_token')"
    echo "Store token:"
    echo "vault kv put env/${role}/vault/transit/seal token=\$token"
+
+   vault kv put env/${role}/postgres POSTGRES_USER=admin POSTGRES_PASSWORD=12345
+
 done
 
 cat <<EOT
@@ -71,3 +74,4 @@ EOT
 
 # audit file for debuging
 vault audit enable file file_path=/opt/vault/audit.log
+
