@@ -48,25 +48,6 @@ kubectl wait -n nfs-provisioning pods -l \
 # Generate private key
 openssl genrsa -out ${WORKDIR}/vault.key 2048
 
-## Create the root key
-#openssl ecparam -out rootCA.key -name prime256v1 -genkey
-#
-## Encrypt Root key
-#openssl pkcs8 -topk8 -in rootCA.key -out rootCA.pem
-#
-## Create public key
-#openssl ec -in rootCA.pem -pubout -out public.pem
-
-# Generate the Certificate Signing Request (CSR).
-#openssl req -new -sha256 -key rootCA.key -out rootCA.csr -config extfile.cnf
-
-# Sign CSR
-#openssl req -new -key rootCA.key -out rootCA.csr -config extfile.cnf
-
-# Generate the Root Certificate.
-#openssl x509 -req -sha256 -days 3650 -in rootCA.csr \
-#    -signkey rootCA.key -out rootCA.crt
-
 # Create vault namespace
 kubectl -n $VAULT_K8S_NAMESPACE create namespace $VAULT_K8S_NAMESPACE
 

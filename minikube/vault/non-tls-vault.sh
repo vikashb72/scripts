@@ -3,7 +3,7 @@
 # Configs
 export WORKDIR="$(pwd)/work/non-tls"
 
-export NFS_SERVER="192.168.0.21"
+export NFS_SERVER="192.168.0.5"
 export NFS_PATH="/data/nfs"
 export VAULT_K8S_NAMESPACE="vault"
 export VAULT_HELM_RELEASE_NAME="vault"
@@ -82,6 +82,7 @@ server:
           address = "[::]:8200"
           cluster_address = "[::]:8201"
           tls_disable = "true"
+          http_read_timeout = "600s"
         }
         storage "raft" {
           path  = "/vault/data/"
@@ -237,15 +238,15 @@ kubectl exec vault-0 -n ${VAULT_K8S_NAMESPACE} -- \
 
 # Enable secrets kv-v2
 kubectl exec -n ${VAULT_K8S_NAMESPACE} vault-0 -- \
-    vault secrets enable -path=secret kv-v2
+    vault secrets enable -path=kv kv-v2
 
 # Add test secret
 kubectl exec -n ${VAULT_K8S_NAMESPACE} vault-0 -- \
-    vault kv put secret/initial/non-tls/key tkey="test1234567890"
+    vault kv put kv/initial/non-tls/key tkey="test1234567890"
 
 # Verify Key
 kubectl exec -n ${VAULT_K8S_NAMESPACE} vault-0 -- \
-    vault kv get secret/initial/non-tls/key 
+    vault kv get kv/initial/non-tls/key 
 
 # Display vault
 kubectl exec -n ${VAULT_K8S_NAMESPACE} vault-0 -- \
@@ -254,19 +255,19 @@ kubectl exec -n ${VAULT_K8S_NAMESPACE} vault-0 -- vault status
 
 # Sample Secrets 
 kubectl exec -n ${VAULT_K8S_NAMESPACE} vault-0 -- \
-    vault kv put secret/configs/example \
+    vault kv put kv/configs/example \
     url=odriod.local \
     username=odroid-admin \
     password=2k6jW7z.Lx9akRporPa.0Zlw 
 
 kubectl exec -n ${VAULT_K8S_NAMESPACE} vault-0 -- \
-   vault kv put secret/test-version version=1 stage=dev
+   vault kv put kv/test-version version=1 stage=dev
 
 kubectl exec -n ${VAULT_K8S_NAMESPACE} vault-0 -- \
-   vault kv put secret/test-version version=2 stage=dev
+   vault kv put kv/test-version version=2 stage=dev
 
 kubectl exec -n ${VAULT_K8S_NAMESPACE} vault-0 -- \
-   vault kv patch secret/test-version version=3
+   vault kv patch kv/test-version version=3
 
 kubectl exec -n ${VAULT_K8S_NAMESPACE} vault-0 -- \
-   vault kv get --version=2 secret/test-version 
+   vault kv get --version=2 kv/test-version 
