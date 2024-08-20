@@ -97,7 +97,7 @@ spec:
   provider:
     vault:
       server: "${EXTERNAL_VAULT}"
-      path: "env/${ENV}"
+      path: "env"
       version: "v2"
       auth:
         tokenSecretRef:
