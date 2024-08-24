@@ -14,6 +14,8 @@ minikube start \
     --container-runtime=containerd \
     --wait=all
 
+minikube addons enable registry
+
 export MINIKUBE_IP=$(minikube ip)
 
 # Wait for flannel pods

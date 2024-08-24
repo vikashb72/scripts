@@ -22,6 +22,8 @@ minikube start \
 
 rm -rf $WORKDIR ; mkdir -p $WORKDIR
 
+minikube addons enable registry
+
 # Get minikube ip
 export MINIKUBE_IP=$(minikube ip)
 
