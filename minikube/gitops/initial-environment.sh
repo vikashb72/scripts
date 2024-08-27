@@ -65,7 +65,7 @@ ARGO_ADM_PASS=$(kubectl -n argocd get secret argocd-initial-admin-secret -o \
     jsonpath="{.data.password}" | base64 -d)
 echo $ARGO_ADM_PASS > argocd.adm.pw
 
-# Bootstrap seal
+# Store Argo ESO Bootstrap INFO
 BOOSTRAP_TOKEN=$(vault kv get -format=json kv/minikube/argo/bootstrap \
     | jq -r '.data.data.token')
 kubectl -n argocd create secret generic argo-boostrap-eso-vault \
@@ -73,16 +73,7 @@ kubectl -n argocd create secret generic argo-boostrap-eso-vault \
     --from-literal=token=${BOOSTRAP_TOKEN} \
     --from-literal=path="${ENV}/vault/transit/seal"
 
-TOKEN=$(vault kv get -format=json kv/minikube/vault/transit/seal \
-    | jq -r '.data.data.token')
-
-kubectl create namespace external-secrets
-
-#kubectl -n external-secrets \
-#    create secret generic vault-token \
-#    --from-literal=token="${TOKEN}"
-
-kubectl -n external-secrets get secrets
+kubectl -n argocd get secrets
 
 helm template gitops/umbrella-chart | kubectl -n argocd apply -f -
 
@@ -93,9 +84,3 @@ do
         -l app.kubernetes.io/instance=external-secrets \
         --for condition=Ready --timeout=120s || sleep 10
 done
-
-#kubectl -n external-secrets apply -f ExternalSecret-postgress.yaml
-kubectl -n external-secrets get externalsecret
-kubectl -n external-secrets get externalsecrets
-kubectl -n external-secrets describe secret postgres-secret
-
