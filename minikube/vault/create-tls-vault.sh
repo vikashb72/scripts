@@ -14,7 +14,7 @@ export KEY_THRESHOLD=3
 # Delete old instances and start fresh
 minikube delete
 minikube start \
-    --nodes=4 \
+    --nodes=2 \
     --cni=flannel \
     --driver=docker \
     --container-runtime=containerd \

@@ -19,7 +19,7 @@ cd $WORKDIR
 minikube stop
 minikube delete
 minikube start \
-    --nodes=4 \
+    --nodes=2 \
     --cni=flannel \
     --driver=docker \
     --container-runtime=containerd \
@@ -74,6 +74,14 @@ kubectl -n argocd create secret generic argo-boostrap-eso-vault \
     --from-literal=path="${ENV}/vault/transit/seal"
 
 kubectl -n argocd get secrets
+
+kubectl create namespace external-secrets
+
+TOKEN=$(vault kv get -format=json kv/${ENV}/vault/transit/seal \
+    | jq -r '.data.data.token')
+kubectl -n external-secrets \
+    create secret generic hashicorp-vault-token \
+    --from-literal=token="${TOKEN}" 
 
 helm template gitops/umbrella-chart | kubectl -n argocd apply -f -
 

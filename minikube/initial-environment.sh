@@ -8,7 +8,7 @@ export NFS_PATH="/data/nfs"
 minikube stop
 minikube delete
 minikube start \
-    --nodes=4 \
+    --nodes=2 \
     --cni=flannel \
     --driver=docker \
     --container-runtime=containerd \
