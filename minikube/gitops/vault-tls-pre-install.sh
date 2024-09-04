@@ -36,6 +36,7 @@ subjectAltName = @alt_names
 DNS.1 = *.${VAULT_SERVICE_NAME}
 DNS.2 = *.${VAULT_SERVICE_NAME}.${VAULT_K8S_NAMESPACE}.svc.${K8S_CLUSTER_NAME}
 DNS.3 = *.${VAULT_K8S_NAMESPACE}
+DNS.4 = *.${VAULT_K8S_NAMESPACE}.svc.${K8S_CLUSTER_NAME}
 IP.1 = 127.0.0.1
 IP.2 = ${MINIKUBE_IP}
 EOF
@@ -60,6 +61,7 @@ spec:
      - server auth
 EOF
 
+kubectl delete csr vault.svc 
 # Send CSR to k8s
 kubectl create -f ${WORKDIR}/csr.yaml
 
@@ -84,9 +86,19 @@ kubectl config view \
 # Create vault namespace
 kubectl create namespace $VAULT_K8S_NAMESPACE
 
+kubectl -n $VAULT_K8S_NAMESPACE delete secret vault-ha-tls
+
 # Create TLS Secret
 kubectl create secret generic vault-ha-tls \
    -n $VAULT_K8S_NAMESPACE \
    --from-file=vault.key=${WORKDIR}/vault.key \
    --from-file=vault.crt=${WORKDIR}/vault.crt \
    --from-file=vault.ca=${WORKDIR}/vault.ca
+
+kubectl create secret generic vault-ha-tls-new \
+   -n $VAULT_K8S_NAMESPACE \
+   --from-file=vault.key=${WORKDIR}/vault.key \
+   --from-file=vault.crt=${WORKDIR}/vault.crt \
+   --from-file=vault.ca=${WORKDIR}/vault.ca
+
+./store-vault-certs-external-vault.sh
