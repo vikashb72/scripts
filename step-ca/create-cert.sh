@@ -11,6 +11,9 @@ usage() {
 Usage:
     -c cert
     -s SAN ( can be specified multiple times. eg -s 192.168.0.1 -s gw.local )
+    -S key size (default 2048)
+    -r create RSA key
+    -d duration h,m  (default 8760h0m0s)
     -h Help
 EOT
    exit 2
@@ -18,12 +21,18 @@ EOT
 
 CERT_SUBJECT=""
 SAN=""
+KTY=""
+SIZE="2048"
+DURATION="8760h"
 
-while getopts "c:s:" opt
+while getopts "c:s:S:d:r" opt
 do
     case $opt in
       c) CERT_SUBJECT=${OPTARG};;
       s) SAN="$SAN --san ${OPTARG}";;
+      S) SIZE=${OPTARG};;
+      r) KTY="--kty RSA ";;
+      d) DURATION=${OPTARG};;
       h) usage;;
       *) usage;;
     esac
@@ -37,8 +46,9 @@ KEY_FILE="${CERT_SUBJECT}.key"
 
 step ca certificate \
     --ca-url ${STEPCAURL} \
-    --provisioner=vikashb@where-ever.za.net \
+    --provisioner vikashb@where-ever.za.net \
     --provisioner-password-file ${STEPDIR}/provisioner.password.txt \
+    --not-after $DURATION $KTY \
     $SAN \
     $CERT_SUBJECT \
     $CRT_FILE \
